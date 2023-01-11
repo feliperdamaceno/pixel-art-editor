@@ -15,9 +15,9 @@ import useStorage from './hooks/useStorage'
 
 export default function App() {
   const [size] = useState(16)
-  const { data, setData } = useStorage('PixelArtEditorCache', [])
+  const { data: tiles, setData } = useStorage('PixelArtEditorCache', [])
   const [currentColor, setCurrentColor] = useState(colors.black)
-  const [grid, setGrid] = useState(false)
+  const [grid, setGrid] = useState(true)
 
   const createTiles = useCallback(
     (size) => {
@@ -32,9 +32,9 @@ export default function App() {
   )
 
   useEffect(() => {
-    if (data) return
+    if (tiles.length > 0) return
     createTiles(size * size)
-  }, [data, createTiles, size])
+  }, [tiles, createTiles, size])
 
   return (
     <Editor>
@@ -42,7 +42,7 @@ export default function App() {
         <GridContext.Provider value={[grid, setGrid]}>
           <Tools />
           <Container size={size}>
-            {data.map((tile) => (
+            {tiles.map((tile) => (
               <Tile key={tile.id} color={tile.color} />
             ))}
           </Container>
