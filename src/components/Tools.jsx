@@ -14,12 +14,13 @@ import {
 
 // Context
 import ColorContext from '../context/ColorContext'
+import GridContext from '../context/GridContext'
 
 export default function Tools() {
+  const [grid, setGrid] = useContext(GridContext)
   const [currentColor, setCurrentColor] = useContext(ColorContext)
-  const colorRef = useRef(currentColor)
-  const toolRef = useRef('pencil')
   const [tools, setTools] = useState(createToolsConfig)
+  const toolRef = useRef('pencil')
 
   function createToolsConfig() {
     return {
@@ -51,16 +52,21 @@ export default function Tools() {
     setCurrentColor(event.target.value)
   }
 
+  function toggleGrid() {
+    setGrid((previous) => !previous)
+  }
+
   function selectToolFunction(event) {
-    toolRef.current = event.currentTarget.name
-    selectTool(toolRef.current)
+    const tool = event.currentTarget.name
+    toolRef.current = tool
+    selectTool(tool)
 
     switch (toolRef.current) {
       case 'pencil':
-        setCurrentColor(colorRef.current.value)
+        setCurrentColor(currentColor)
         break
       case 'eraser':
-        setCurrentColor('#fff')
+        setCurrentColor(colors.white)
         break
       default:
         return
@@ -69,7 +75,7 @@ export default function Tools() {
 
   return (
     <Panel>
-      <ColorPicker ref={colorRef} onChange={selectColor} type="color" />
+      <ColorPicker onChange={selectColor} type="color" />
 
       <Button
         onClick={selectToolFunction}
@@ -95,7 +101,7 @@ export default function Tools() {
         <CleanIcon />
       </Button>
 
-      <Button>
+      <Button onClick={toggleGrid} selected={grid}>
         <GridIcon />
       </Button>
 
@@ -131,22 +137,22 @@ const ColorPicker = styled.input`
   }
 
   &::-webkit-color-swatch {
-    border: 0.2rem solid ${colors.light};
+    border: 0.2rem solid ${colors.white};
     border-radius: 0.25rem;
   }
 
   &::-moz-color-swatch {
-    border: 0.2rem solid ${colors.light};
+    border: 0.2rem solid ${colors.white};
     border-radius: 0.25rem;
   }
 `
 
 const Button = styled.button`
   background-color: ${({ selected }) =>
-    selected ? colors.light : colors.dark};
+    selected ? colors.white : colors.dark};
   border: 0;
   border-radius: 0.25rem;
-  color: ${({ selected }) => (selected ? colors.dark : colors.light)};
+  color: ${({ selected }) => (selected ? colors.dark : colors.white)};
   font-size: 2.5rem;
   padding: 0.25rem;
   height: 3rem;

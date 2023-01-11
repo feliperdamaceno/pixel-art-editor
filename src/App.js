@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 
 // Styles
@@ -10,35 +10,55 @@ import Tools from './components/Tools'
 
 // Context
 import ColorContext from './context/ColorContext'
+import GridContext from './context/GridContext'
+import useStorage from './hooks/useStorage'
 
 export default function App() {
-  const [size] = useState(8)
-  const [currentColor, setCurrentColor] = useState('#000')
+  const [size] = useState(16)
+  const { data, setData, removeData } = useStorage('PixelArtEditorCache', [])
+  const [currentColor, setCurrentColor] = useState(colors.black)
+  const [grid, setGrid] = useState(false)
 
-  function createTiles(size) {
-    const tiles = []
-    for (let i = 0; i < size; i++) {
-      tiles.push({ id: i })
-    }
-    return tiles
+  const createTiles = useCallback(
+    (size) => {
+      const tiles = []
+      for (let i = 0; i < size; i++) {
+        tiles.push({ id: i, color: '#fff' })
+      }
+
+      setData(tiles)
+    },
+    [setData]
+  )
+
+  function toggleGrid() {
+    setGrid((previous) => !previous)
+    return grid
   }
 
+  useEffect(() => {
+    if (data) return
+    createTiles(size * size)
+  }, [data, createTiles, size])
+
   return (
-    <Container>
+    <Editor>
       <ColorContext.Provider value={[currentColor, setCurrentColor]}>
-        <Tools />
-        <Grid size={size}>
-          {createTiles(size * size).map((tile) => (
-            <Tile key={tile.id} />
-          ))}
-        </Grid>
+        <GridContext.Provider value={[grid, setGrid]}>
+          <Tools />
+          <Container size={size}>
+            {data.map((tile) => (
+              <Tile key={tile.id} color={tile.color} />
+            ))}
+          </Container>
+        </GridContext.Provider>
       </ColorContext.Provider>
-    </Container>
+    </Editor>
   )
 }
 
 // Styled Components
-const Container = styled.div`
+const Editor = styled.div`
   background-color: ${colors.background};
   min-width: 100vw;
   min-height: 100vh;
@@ -50,7 +70,7 @@ const Container = styled.div`
   user-select: none;
 `
 
-const Grid = styled.div`
+const Container = styled.div`
   --size: ${({ size }) => size};
   width: 100%;
   max-width: 60rem;
