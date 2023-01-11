@@ -15,7 +15,7 @@ import useStorage from './hooks/useStorage'
 
 export default function App() {
   const [size] = useState(16)
-  const { data, setData, removeData } = useStorage('PixelArtEditorCache', [])
+  const { data, setData } = useStorage('PixelArtEditorCache', [])
   const [currentColor, setCurrentColor] = useState(colors.black)
   const [grid, setGrid] = useState(false)
 
@@ -30,11 +30,6 @@ export default function App() {
     },
     [setData]
   )
-
-  function toggleGrid() {
-    setGrid((previous) => !previous)
-    return grid
-  }
 
   useEffect(() => {
     if (data) return
