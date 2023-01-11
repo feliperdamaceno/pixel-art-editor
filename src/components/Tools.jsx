@@ -1,4 +1,4 @@
-import { useState, useContext, useRef } from 'react'
+import { useState, useRef } from 'react'
 
 // Styles
 import styled from 'styled-components'
@@ -13,14 +13,14 @@ import {
 } from 'react-icons/md'
 
 // Context
-import ColorContext from '../context/ColorContext'
-import GridContext from '../context/GridContext'
+import { useColorContext } from '../context/ColorContext'
+import { useGridContext } from '../context/GridContext'
 
 export default function Tools() {
-  const [grid, setGrid] = useContext(GridContext)
-  const [currentColor, setCurrentColor] = useContext(ColorContext)
   const [tools, setTools] = useState(createToolsConfig)
-  const toolRef = useRef('pencil')
+  const [currentColor, setCurrentColor] = useColorContext()
+  const [grid, setGrid] = useGridContext()
+  const colorPickerRef = useRef(currentColor)
 
   function createToolsConfig() {
     return {
@@ -48,22 +48,22 @@ export default function Tools() {
     })
   }
 
-  function selectColor(event) {
-    setCurrentColor(event.target.value)
-  }
-
   function toggleGrid() {
     setGrid((previous) => !previous)
   }
 
+  function selectColor(event) {
+    if (tools.eraser.selected) return
+    setCurrentColor(event.target.value)
+  }
+
   function selectToolFunction(event) {
     const tool = event.currentTarget.name
-    toolRef.current = tool
     selectTool(tool)
 
-    switch (toolRef.current) {
+    switch (tool) {
       case 'pencil':
-        setCurrentColor(currentColor)
+        setCurrentColor(colorPickerRef.current.value)
         break
       case 'eraser':
         setCurrentColor(colors.white)
@@ -75,7 +75,7 @@ export default function Tools() {
 
   return (
     <Panel>
-      <ColorPicker onChange={selectColor} type="color" />
+      <ColorPicker ref={colorPickerRef} onChange={selectColor} type="color" />
 
       <Button
         onClick={selectToolFunction}
@@ -89,6 +89,7 @@ export default function Tools() {
         onClick={selectToolFunction}
         name={tools.eraser.name}
         selected={tools.eraser.selected}
+        cursor={tools.eraser.name}
       >
         <EraserIcon />
       </Button>

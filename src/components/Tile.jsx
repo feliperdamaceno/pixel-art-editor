@@ -1,16 +1,16 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 
 // Styles
 import styled from 'styled-components'
 import { colors } from '../Global.styles'
 
 // Context
-import ColorContext from '../context/ColorContext'
-import GridContext from '../context/GridContext'
+import { useColorContext } from '../context/ColorContext'
+import { useGridContext } from '../context/GridContext'
 
 export default function Tile({ color }) {
-  const [grid] = useContext(GridContext)
-  const [currentColor] = useContext(ColorContext)
+  const [grid] = useGridContext()
+  const [currentColor] = useColorContext()
   const [selfColor, setSelfColor] = useState(color)
 
   function handleChangeColor() {

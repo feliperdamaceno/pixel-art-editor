@@ -9,15 +9,13 @@ import Tile from './components/Tile'
 import Tools from './components/Tools'
 
 // Context
-import ColorContext from './context/ColorContext'
-import GridContext from './context/GridContext'
+import ColorProvider from './context/ColorContext'
+import GridProvider from './context/GridContext'
 import useStorage from './hooks/useStorage'
 
 export default function App() {
   const [size] = useState(16)
   const { data: tiles, setData } = useStorage('PixelArtEditorCache', [])
-  const [currentColor, setCurrentColor] = useState(colors.black)
-  const [grid, setGrid] = useState(true)
 
   const createTiles = useCallback(
     (size) => {
@@ -38,16 +36,16 @@ export default function App() {
 
   return (
     <Editor>
-      <ColorContext.Provider value={[currentColor, setCurrentColor]}>
-        <GridContext.Provider value={[grid, setGrid]}>
+      <ColorProvider>
+        <GridProvider>
           <Tools />
           <Container size={size}>
             {tiles.map((tile) => (
               <Tile key={tile.id} color={tile.color} />
             ))}
           </Container>
-        </GridContext.Provider>
-      </ColorContext.Provider>
+        </GridProvider>
+      </ColorProvider>
     </Editor>
   )
 }
