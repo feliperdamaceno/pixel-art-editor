@@ -6,21 +6,17 @@ import { colors } from '../Global.styles'
 import { useColorContext } from '../context/ColorContext'
 import { useGridContext } from '../context/GridContext'
 
-// Hooks
-import { useState } from 'react'
-
-export default function Pixel() {
-  const [color, setColor] = useState(null)
+export default function Pixel({ id, color, changePixelColor }) {
   const [currentColor] = useColorContext()
   const [grid] = useGridContext()
 
-  function handleChangeColor() {
-    setColor(currentColor)
+  function handleClick() {
+    changePixelColor(id, currentColor)
   }
 
   return (
     <>
-      <PixelStyles onClick={handleChangeColor} color={color} grid={grid} />
+      <PixelStyles onClick={handleClick} color={color} grid={grid} />
     </>
   )
 }

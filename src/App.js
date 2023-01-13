@@ -14,19 +14,28 @@ import ColorProvider from './context/ColorContext'
 import GridProvider from './context/GridContext'
 
 export default function App() {
-  const [size] = useState(8)
+  const [size] = useState(2)
   const [pixels, setPixels] = useState(createPixels)
 
   function createPixels() {
     const pixels = []
     for (let i = 0; i < size * size; i++) {
-      pixels.push({ id: i })
+      pixels.push({ id: i, color: colors.white })
     }
     return pixels
   }
 
   function resetPixels() {
     setPixels(createPixels)
+  }
+
+  function changePixelColor(id, color) {
+    setPixels((previous) => {
+      return previous.map((pixel) => {
+        if (pixel.id === id) return { ...pixel, color: color }
+        return pixel
+      })
+    })
   }
 
   return (
@@ -36,7 +45,12 @@ export default function App() {
           <Tools resetPixels={resetPixels} />
           <Grid size={size}>
             {pixels.map((pixel) => (
-              <Pixel key={pixel.id} />
+              <Pixel
+                key={pixel.id}
+                id={pixel.id}
+                color={pixel.color}
+                changePixelColor={changePixelColor}
+              />
             ))}
           </Grid>
         </GridProvider>
@@ -59,7 +73,6 @@ const Container = styled.div`
 `
 const Grid = styled.div`
   --grid-size: ${({ size }) => size};
-  background-color: ${colors.white};
   outline: 0.1rem solid ${colors.black};
   width: 100%;
   max-width: 60rem;
