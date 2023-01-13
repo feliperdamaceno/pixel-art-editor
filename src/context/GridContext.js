@@ -1,24 +1,24 @@
 import { useState, useContext, createContext } from 'react'
 
 const GridContext = createContext(null)
-const GridUpdateContext = createContext(null)
+const GridToggleContext = createContext(null)
 
 export default function GridProvider({ children }) {
-  const [grid, setGrid] = useState(true)
+  const [toggled, setToggled] = useState(true)
 
-  function updateGrid(callBack) {
-    setGrid(callBack)
+  function toggleGrid() {
+    setToggled((previous) => !previous)
   }
 
   return (
-    <GridContext.Provider value={grid}>
-      <GridUpdateContext.Provider value={updateGrid}>
+    <GridContext.Provider value={toggled}>
+      <GridToggleContext.Provider value={toggleGrid}>
         {children}
-      </GridUpdateContext.Provider>
+      </GridToggleContext.Provider>
     </GridContext.Provider>
   )
 }
 
 export function useGridContext() {
-  return [useContext(GridContext), useContext(GridUpdateContext)]
+  return [useContext(GridContext), useContext(GridToggleContext)]
 }

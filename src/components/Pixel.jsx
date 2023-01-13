@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-
 // Styles
 import styled from 'styled-components'
 import { colors } from '../Global.styles'
@@ -8,28 +6,27 @@ import { colors } from '../Global.styles'
 import { useColorContext } from '../context/ColorContext'
 import { useGridContext } from '../context/GridContext'
 
-export default function Tile({ color, tiles }) {
-  const [grid] = useGridContext()
+// Hooks
+import { useState } from 'react'
+
+export default function Pixel() {
+  const [color, setColor] = useState(null)
   const [currentColor] = useColorContext()
-  const [selfColor, setSelfColor] = useState(color)
+  const [grid] = useGridContext()
 
   function handleChangeColor() {
-    setSelfColor(currentColor)
+    setColor(currentColor)
   }
-
-  useEffect(() => {
-    if (tiles) setSelfColor(color)
-  }, [tiles, setSelfColor, color])
 
   return (
     <>
-      <TileStyle onClick={handleChangeColor} color={selfColor} grid={grid} />
+      <PixelStyles onClick={handleChangeColor} color={color} grid={grid} />
     </>
   )
 }
 
 // Styled Components
-const TileStyle = styled.div`
+const PixelStyles = styled.div`
   width: 100%;
   aspect-ratio: 1/1;
   background-color: ${({ color }) => color};

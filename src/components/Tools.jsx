@@ -1,5 +1,3 @@
-import { useState, useRef } from 'react'
-
 // Styles
 import styled from 'styled-components'
 import { colors } from '../Global.styles'
@@ -7,22 +5,24 @@ import {
   MdDownload as DownloadIcon,
   MdCreate as PencilIcon,
   MdOutlineHowToVote as EraserIcon,
-  MdOutlineFormatColorFill as BucketIcon,
   MdGrid4X4 as GridIcon,
   MdOutlineDelete as ExcludeIcon
 } from 'react-icons/md'
+
+// Hooks
+import { useState, useRef } from 'react'
 
 // Context
 import { useColorContext } from '../context/ColorContext'
 import { useGridContext } from '../context/GridContext'
 
-export default function Tools({ resetTiles }) {
-  const [tools, setTools] = useState(createToolsConfig)
-  const [grid, setGrid] = useGridContext()
+export default function Tools({ resetPixels }) {
+  const [tools, setTools] = useState(createToolsState)
+  const [grid, toggleGrid] = useGridContext()
   const [currentColor, setCurrentColor] = useColorContext()
   const colorPickerRef = useRef(currentColor)
 
-  function createToolsConfig() {
+  function createToolsState() {
     return {
       pencil: {
         name: 'pencil',
@@ -32,10 +32,6 @@ export default function Tools({ resetTiles }) {
         name: 'eraser',
         selected: false
       },
-      bucket: {
-        name: 'bucket',
-        selected: false
-      },
       exclude: {
         name: 'exclude',
         selected: false
@@ -43,7 +39,7 @@ export default function Tools({ resetTiles }) {
     }
   }
 
-  function selectTool(name) {
+  function selectCurrentTool(name) {
     setTools((previous) => {
       for (const tool in previous) {
         if (previous[tool].name === name) {
@@ -56,8 +52,11 @@ export default function Tools({ resetTiles }) {
     })
   }
 
-  function toggleGrid() {
-    setGrid((previous) => !previous)
+  function resetToDefaultTool() {
+    setTimeout(() => {
+      selectCurrentTool('pencil')
+      setCurrentColor(colorPickerRef.current.value)
+    }, 200)
   }
 
   function selectColor(event) {
@@ -66,30 +65,19 @@ export default function Tools({ resetTiles }) {
     }
   }
 
-  function resetToDefaultTool() {
-    setTimeout(() => {
-      selectTool('pencil')
-      setCurrentColor(colorPickerRef.current.value)
-    }, 200)
-  }
+  function selectTool(event) {
+    const currentTool = event.currentTarget.name
+    selectCurrentTool(currentTool)
 
-  function selectToolFunction(event) {
-    const tool = event.currentTarget.name
-    selectTool(tool)
-
-    switch (tool) {
+    switch (currentTool) {
       case 'pencil':
         setCurrentColor(colorPickerRef.current.value)
         break
       case 'eraser':
         setCurrentColor(colors.white)
         break
-      case 'bucket':
-        resetTiles(currentColor)
-        resetToDefaultTool()
-        break
       case 'exclude':
-        resetTiles()
+        resetPixels()
         resetToDefaultTool()
         break
       default:
@@ -102,7 +90,7 @@ export default function Tools({ resetTiles }) {
       <ColorPicker ref={colorPickerRef} onChange={selectColor} type="color" />
 
       <Button
-        onClick={selectToolFunction}
+        onClick={selectTool}
         name={tools.pencil.name}
         selected={tools.pencil.selected}
       >
@@ -110,7 +98,7 @@ export default function Tools({ resetTiles }) {
       </Button>
 
       <Button
-        onClick={selectToolFunction}
+        onClick={selectTool}
         name={tools.eraser.name}
         selected={tools.eraser.selected}
       >
@@ -118,23 +106,15 @@ export default function Tools({ resetTiles }) {
       </Button>
 
       <Button
-        onClick={selectToolFunction}
-        name={tools.bucket.name}
-        selected={tools.bucket.selected}
-      >
-        <BucketIcon />
-      </Button>
-
-      <Button onClick={toggleGrid} selected={grid}>
-        <GridIcon />
-      </Button>
-
-      <Button
-        onClick={selectToolFunction}
+        onClick={selectTool}
         name={tools.exclude.name}
         selected={tools.exclude.selected}
       >
         <ExcludeIcon />
+      </Button>
+
+      <Button onClick={toggleGrid} selected={grid}>
+        <GridIcon />
       </Button>
 
       <Button>

@@ -1,51 +1,52 @@
-import { useState } from 'react'
-import styled from 'styled-components'
-
 // Styles
+import styled from 'styled-components'
 import { colors } from './Global.styles'
 
 // Components
-import Tile from './components/Tile'
 import Tools from './components/Tools'
+import Pixel from './components/Pixel'
+
+// Hooks
+import { useState } from 'react'
 
 // Context
 import ColorProvider from './context/ColorContext'
 import GridProvider from './context/GridContext'
 
 export default function App() {
-  const [size] = useState(16)
-  const [tiles, setTiles] = useState(() => createTiles())
+  const [size] = useState(8)
+  const [pixels, setPixels] = useState(createPixels)
 
-  function createTiles(color) {
-    const tiles = []
+  function createPixels() {
+    const pixels = []
     for (let i = 0; i < size * size; i++) {
-      tiles.push({ id: i, color: color ? color : colors.white })
+      pixels.push({ id: i })
     }
-    return tiles
+    return pixels
   }
 
-  function resetTiles(color) {
-    setTiles(createTiles(color))
+  function resetPixels() {
+    setPixels(createPixels)
   }
 
   return (
-    <Editor>
+    <Container>
       <ColorProvider>
         <GridProvider>
-          <Tools resetTiles={resetTiles} />
-          <Container size={size}>
-            {tiles.map((tile) => (
-              <Tile key={tile.id} color={tile.color} tiles={tiles} />
+          <Tools resetPixels={resetPixels} />
+          <Grid size={size}>
+            {pixels.map((pixel) => (
+              <Pixel key={pixel.id} />
             ))}
-          </Container>
+          </Grid>
         </GridProvider>
       </ColorProvider>
-    </Editor>
+    </Container>
   )
 }
 
 // Styled Components
-const Editor = styled.div`
+const Container = styled.div`
   background-color: ${colors.background};
   min-width: 100vw;
   min-height: 100vh;
@@ -56,11 +57,12 @@ const Editor = styled.div`
   gap: 2rem;
   user-select: none;
 `
-
-const Container = styled.div`
-  --size: ${({ size }) => size};
+const Grid = styled.div`
+  --grid-size: ${({ size }) => size};
+  background-color: ${colors.white};
+  outline: 0.1rem solid ${colors.black};
   width: 100%;
   max-width: 60rem;
   display: grid;
-  grid-template-columns: repeat(var(--size), 1fr);
+  grid-template-columns: repeat(var(--grid-size), 1fr);
 `
