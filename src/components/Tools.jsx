@@ -9,17 +9,17 @@ import {
   MdOutlineHowToVote as EraserIcon,
   MdOutlineFormatColorFill as BucketIcon,
   MdGrid4X4 as GridIcon,
-  MdOutlineDelete as CleanIcon
+  MdOutlineDelete as ExcludeIcon
 } from 'react-icons/md'
 
 // Context
 import { useColorContext } from '../context/ColorContext'
 import { useGridContext } from '../context/GridContext'
 
-export default function Tools() {
+export default function Tools({ resetTiles }) {
   const [tools, setTools] = useState(createToolsConfig)
-  const [currentColor, setCurrentColor] = useColorContext()
   const [grid, setGrid] = useGridContext()
+  const [currentColor, setCurrentColor] = useColorContext()
   const colorPickerRef = useRef(currentColor)
 
   function createToolsConfig() {
@@ -30,6 +30,14 @@ export default function Tools() {
       },
       eraser: {
         name: 'eraser',
+        selected: false
+      },
+      bucket: {
+        name: 'bucket',
+        selected: false
+      },
+      exclude: {
+        name: 'exclude',
         selected: false
       }
     }
@@ -53,8 +61,16 @@ export default function Tools() {
   }
 
   function selectColor(event) {
-    if (tools.eraser.selected) return
-    setCurrentColor(event.target.value)
+    if (tools.pencil.selected) {
+      setCurrentColor(event.target.value)
+    }
+  }
+
+  function resetToDefaultTool() {
+    setTimeout(() => {
+      selectTool('pencil')
+      setCurrentColor(colorPickerRef.current.value)
+    }, 200)
   }
 
   function selectToolFunction(event) {
@@ -67,6 +83,14 @@ export default function Tools() {
         break
       case 'eraser':
         setCurrentColor(colors.white)
+        break
+      case 'bucket':
+        resetTiles(currentColor)
+        resetToDefaultTool()
+        break
+      case 'exclude':
+        resetTiles()
+        resetToDefaultTool()
         break
       default:
         return
@@ -89,21 +113,28 @@ export default function Tools() {
         onClick={selectToolFunction}
         name={tools.eraser.name}
         selected={tools.eraser.selected}
-        cursor={tools.eraser.name}
       >
         <EraserIcon />
       </Button>
 
-      <Button>
+      <Button
+        onClick={selectToolFunction}
+        name={tools.bucket.name}
+        selected={tools.bucket.selected}
+      >
         <BucketIcon />
-      </Button>
-
-      <Button>
-        <CleanIcon />
       </Button>
 
       <Button onClick={toggleGrid} selected={grid}>
         <GridIcon />
+      </Button>
+
+      <Button
+        onClick={selectToolFunction}
+        name={tools.exclude.name}
+        selected={tools.exclude.selected}
+      >
+        <ExcludeIcon />
       </Button>
 
       <Button>

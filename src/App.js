@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 // Styles
@@ -11,37 +11,31 @@ import Tools from './components/Tools'
 // Context
 import ColorProvider from './context/ColorContext'
 import GridProvider from './context/GridContext'
-import useStorage from './hooks/useStorage'
 
 export default function App() {
   const [size] = useState(16)
-  const { data: tiles, setData } = useStorage('PixelArtEditorCache', [])
+  const [tiles, setTiles] = useState(() => createTiles())
 
-  const createTiles = useCallback(
-    (size) => {
-      const tiles = []
-      for (let i = 0; i < size; i++) {
-        tiles.push({ id: i, color: '#fff' })
-      }
+  function createTiles(color) {
+    const tiles = []
+    for (let i = 0; i < size * size; i++) {
+      tiles.push({ id: i, color: color ? color : colors.white })
+    }
+    return tiles
+  }
 
-      setData(tiles)
-    },
-    [setData]
-  )
-
-  useEffect(() => {
-    if (tiles.length > 0) return
-    createTiles(size * size)
-  }, [tiles, createTiles, size])
+  function resetTiles(color) {
+    setTiles(createTiles(color))
+  }
 
   return (
     <Editor>
       <ColorProvider>
         <GridProvider>
-          <Tools />
+          <Tools resetTiles={resetTiles} />
           <Container size={size}>
             {tiles.map((tile) => (
-              <Tile key={tile.id} color={tile.color} />
+              <Tile key={tile.id} color={tile.color} tiles={tiles} />
             ))}
           </Container>
         </GridProvider>

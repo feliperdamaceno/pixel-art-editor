@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // Styles
 import styled from 'styled-components'
@@ -8,7 +8,7 @@ import { colors } from '../Global.styles'
 import { useColorContext } from '../context/ColorContext'
 import { useGridContext } from '../context/GridContext'
 
-export default function Tile({ color }) {
+export default function Tile({ color, tiles }) {
   const [grid] = useGridContext()
   const [currentColor] = useColorContext()
   const [selfColor, setSelfColor] = useState(color)
@@ -16,6 +16,10 @@ export default function Tile({ color }) {
   function handleChangeColor() {
     setSelfColor(currentColor)
   }
+
+  useEffect(() => {
+    if (tiles) setSelfColor(color)
+  }, [tiles, setSelfColor, color])
 
   return (
     <>
@@ -28,7 +32,7 @@ export default function Tile({ color }) {
 const TileStyle = styled.div`
   width: 100%;
   aspect-ratio: 1/1;
-  background-color: ${({ color }) => (color ? color : colors.white)};
+  background-color: ${({ color }) => color};
   border: ${({ grid }) => (grid ? `0.1rem solid ${colors.black}` : null)};
   cursor: crosshair;
 `
