@@ -17,9 +17,9 @@ import { useColorContext } from '../context/ColorContext'
 import { useGridContext } from '../context/GridContext'
 
 export default function Tools({ resetPixels, downloadPixelArt }) {
-  const [tools, setTools] = useState(createToolsState)
-  const [grid, toggleGrid] = useGridContext()
   const [currentColor, setCurrentColor] = useColorContext()
+  const [grid, toggleGrid] = useGridContext()
+  const [tools, setTools] = useState(createToolsState)
   const colorPickerRef = useRef(currentColor)
 
   function createToolsState() {
@@ -86,7 +86,7 @@ export default function Tools({ resetPixels, downloadPixelArt }) {
   }
 
   return (
-    <Panel>
+    <Container>
       <ColorPicker ref={colorPickerRef} onChange={selectColor} type="color" />
 
       <Button
@@ -120,12 +120,12 @@ export default function Tools({ resetPixels, downloadPixelArt }) {
       <Button onClick={downloadPixelArt}>
         <DownloadIcon />
       </Button>
-    </Panel>
+    </Container>
   )
 }
 
 // Styled Components
-const Panel = styled.div`
+const Container = styled.div`
   background-color: ${colors.dark};
   border-radius: 0.25rem;
   padding: 1rem;

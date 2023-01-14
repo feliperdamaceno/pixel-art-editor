@@ -17,7 +17,7 @@ import GridProvider from './context/GridContext'
 
 export default function App() {
   const [pixels, setPixels] = useState(createPixels)
-  const canvas = useRef()
+  const gridRef = useRef()
 
   function createPixels() {
     const pixels = []
@@ -41,7 +41,7 @@ export default function App() {
   }
 
   function downloadPixelArt() {
-    html2canvas(canvas.current).then(function (canvas) {
+    html2canvas(gridRef.current).then(function (canvas) {
       const image = document.createElement('a')
       image.href = canvas.toDataURL()
       image.download = 'image.png'
@@ -56,9 +56,8 @@ export default function App() {
           <Tools
             resetPixels={resetPixels}
             downloadPixelArt={downloadPixelArt}
-            canvas={canvas}
           />
-          <Grid ref={canvas}>
+          <Grid ref={gridRef}>
             {pixels.map((pixel) => (
               <Pixel
                 key={pixel.id}

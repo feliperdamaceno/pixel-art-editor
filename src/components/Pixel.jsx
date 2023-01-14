@@ -14,15 +14,11 @@ export default function Pixel({ id, color, changePixelColor }) {
     changePixelColor(id, currentColor)
   }
 
-  return (
-    <>
-      <PixelStyles onClick={handleClick} color={color} grid={grid} />
-    </>
-  )
+  return <Container onClick={handleClick} color={color} grid={grid} />
 }
 
 // Styled Components
-const PixelStyles = styled.div`
+const Container = styled.div`
   width: 100%;
   aspect-ratio: 1/1;
   background-color: ${({ color }) => color};
