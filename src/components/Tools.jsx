@@ -16,7 +16,7 @@ import { useState, useRef } from 'react'
 import { useColorContext } from '../context/ColorContext'
 import { useGridContext } from '../context/GridContext'
 
-export default function Tools({ resetPixels }) {
+export default function Tools({ resetPixels, downloadPixelArt }) {
   const [tools, setTools] = useState(createToolsState)
   const [grid, toggleGrid] = useGridContext()
   const [currentColor, setCurrentColor] = useColorContext()
@@ -117,7 +117,7 @@ export default function Tools({ resetPixels }) {
         <GridIcon />
       </Button>
 
-      <Button>
+      <Button onClick={downloadPixelArt}>
         <DownloadIcon />
       </Button>
     </Panel>
