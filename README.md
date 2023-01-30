@@ -1,4 +1,4 @@
-## { App: 'Pixel Art Editor' }
+## Pixel Art Editor
 
 ![page-showcase](app-showcase/app-showcase.gif)
 
